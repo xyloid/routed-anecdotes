@@ -1,25 +1,12 @@
 import React, { useState } from "react";
 
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-
-const Menu = () => {
-  const padding = {
-    paddingRight: 5,
-  };
-  return (
-    <div>
-      <a href="#" style={padding}>
-        anecdotes
-      </a>
-      <a href="#" style={padding}>
-        create new
-      </a>
-      <a href="#" style={padding}>
-        about
-      </a>
-    </div>
-  );
-};
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useHistory,
+} from "react-router-dom";
 
 const AnecdoteList = ({ anecdotes }) => (
   <div>
@@ -69,6 +56,8 @@ const Footer = () => (
 );
 
 const CreateNew = (props) => {
+  const history = useHistory();
+
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState("");
   const [info, setInfo] = useState("");
@@ -81,6 +70,7 @@ const CreateNew = (props) => {
       info,
       votes: 0,
     });
+    history.push("/");
   };
 
   return (
@@ -117,6 +107,13 @@ const CreateNew = (props) => {
   );
 };
 
+const Notification = ({ message }) => {
+  if (message) {
+    return <div>{message}</div>;
+  } else {
+    return null;
+  }
+};
 
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
@@ -141,6 +138,10 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0);
     setAnecdotes(anecdotes.concat(anecdote));
+    setNotification(anecdote.content);
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
@@ -155,7 +156,7 @@ const App = () => {
 
     setAnecdotes(anecdotes.map((a) => (a.id === id ? voted : a)));
   };
-  
+
   const padding = {
     paddingRight: 5,
   };
@@ -163,25 +164,32 @@ const App = () => {
   return (
     <div>
       <h1>Software anecdotes</h1>
-    <Router>
-      <div>
-      <Link style={padding} to ="/">anecdotes</Link>
-      <Link style={padding} to="/create">create new</Link>
-      <Link style={padding} to="/about">about</Link>
-      </div>
-      <Switch>
-        <Route path="/create">
-          <CreateNew addNew={addNew}/>
-        </Route>
-        <Route path="/about">
-          <About />
-        </Route>
-        <Route path="/">
-        <AnecdoteList anecdotes={anecdotes} />
-        </Route>
-      </Switch>
-    </Router>
-    <Footer />
+      <Router>
+        <div>
+          <Link style={padding} to="/">
+            anecdotes
+          </Link>
+          <Link style={padding} to="/create">
+            create new
+          </Link>
+          <Link style={padding} to="/about">
+            about
+          </Link>
+        </div>
+        <Notification message={notification} />
+        <Switch>
+          <Route path="/create">
+            <CreateNew addNew={addNew} />
+          </Route>
+          <Route path="/about">
+            <About />
+          </Route>
+          <Route path="/">
+            <AnecdoteList anecdotes={anecdotes} />
+          </Route>
+        </Switch>
+      </Router>
+      <Footer />
     </div>
   );
 };
