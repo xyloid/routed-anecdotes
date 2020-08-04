@@ -23,7 +23,7 @@ const Anecdote = ({anecdote})=>{
   return (<div>
     <h1>{anecdote.content}</h1>
   <p>has {anecdote.votes} votes</p>
-  <p>for more info see {anecdote.url}</p>
+  <p>for more info see <a href={`${anecdote.info}`}>{anecdote.info}</a></p>
   </div>)
 }
 
@@ -146,10 +146,10 @@ const App = () => {
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0);
     setAnecdotes(anecdotes.concat(anecdote));
-    setNotification(anecdote.content);
+    setNotification(`a new anecdote ${anecdote.content} created!`);
     setTimeout(() => {
       setNotification(null);
-    }, 5000);
+    }, 10000);
   };
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id);
