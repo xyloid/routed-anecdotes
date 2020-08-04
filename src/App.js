@@ -6,6 +6,7 @@ import {
   Route,
   Link,
   useHistory,
+  useRouteMatch,
 } from "react-router-dom";
 
 const AnecdoteList = ({ anecdotes }) => (
@@ -13,11 +14,19 @@ const AnecdoteList = ({ anecdotes }) => (
     <h2>Anecdotes</h2>
     <ul>
       {anecdotes.map((anecdote) => (
-        <li key={anecdote.id}>{anecdote.content}</li>
+        <li key={anecdote.id}><Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>
       ))}
     </ul>
   </div>
 );
+
+const Anecdote = ({anecdote})=>{
+  return (<div>
+    <h1>{anecdote.content}</h1>
+  <p>has {anecdote.votes} votes</p>
+  <p>for more info see {anecdote.url}</p>
+  </div>)
+}
 
 const About = () => (
   <div>
@@ -161,6 +170,12 @@ const App = () => {
     paddingRight: 5,
   };
 
+  const match = useRouteMatch("/anecdotes/:id");
+  const anecdote = match
+    ? anecdotes.find((a) => a.id === Number(match.params.id))
+    : null;
+  // const anecdote = null
+
   return (
     <div>
       <h1>Software anecdotes</h1>
@@ -178,6 +193,9 @@ const App = () => {
         </div>
         <Notification message={notification} />
         <Switch>
+          <Route path="/anecdotes/:id">
+            <Anecdote anecdote={anecdote}/>
+          </Route>
           <Route path="/create">
             <CreateNew addNew={addNew} />
           </Route>
