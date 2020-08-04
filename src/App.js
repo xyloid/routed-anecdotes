@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import {
-  BrowserRouter as Router,
   Switch,
   Route,
   Link,
@@ -172,14 +171,14 @@ const App = () => {
 
   const match = useRouteMatch("/anecdotes/:id");
   const anecdote = match
-    ? anecdotes.find((a) => a.id === Number(match.params.id))
+    ? anecdotes.find((a) => a.id === match.params.id)
     : null;
   // const anecdote = null
 
   return (
     <div>
       <h1>Software anecdotes</h1>
-      <Router>
+      
         <div>
           <Link style={padding} to="/">
             anecdotes
@@ -206,7 +205,7 @@ const App = () => {
             <AnecdoteList anecdotes={anecdotes} />
           </Route>
         </Switch>
-      </Router>
+      
       <Footer />
     </div>
   );
