@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useField } from "./hooks";
 
 import {
   Switch,
@@ -13,19 +14,25 @@ const AnecdoteList = ({ anecdotes }) => (
     <h2>Anecdotes</h2>
     <ul>
       {anecdotes.map((anecdote) => (
-        <li key={anecdote.id}><Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>
+        <li key={anecdote.id}>
+          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+        </li>
       ))}
     </ul>
   </div>
 );
 
-const Anecdote = ({anecdote})=>{
-  return (<div>
-    <h1>{anecdote.content}</h1>
-  <p>has {anecdote.votes} votes</p>
-  <p>for more info see <a href={`${anecdote.info}`}>{anecdote.info}</a></p>
-  </div>)
-}
+const Anecdote = ({ anecdote }) => {
+  return (
+    <div>
+      <h1>{anecdote.content}</h1>
+      <p>has {anecdote.votes} votes</p>
+      <p>
+        for more info see <a href={`${anecdote.info}`}>{anecdote.info}</a>
+      </p>
+    </div>
+  );
+};
 
 const About = () => (
   <div>
@@ -66,16 +73,20 @@ const Footer = () => (
 const CreateNew = (props) => {
   const history = useHistory();
 
-  const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
-  const [info, setInfo] = useState("");
+  const author = useField("text");
+  const content = useField("text");
+  const info = useField("text");
+
+  // const [content, setContent] = useState("");
+  // const [author, setAuthor] = useState("");
+  // const [info, setInfo] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0,
     });
     history.push("/");
@@ -87,27 +98,15 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input
-            name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-          />
+          <input {...content} />
         </div>
         <div>
           author
-          <input
-            name="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-          />
+          <input {...author} />
         </div>
         <div>
           url for more info
-          <input
-            name="info"
-            value={info}
-            onChange={(e) => setInfo(e.target.value)}
-          />
+          <input {...info} />
         </div>
         <button>create</button>
       </form>
@@ -178,34 +177,34 @@ const App = () => {
   return (
     <div>
       <h1>Software anecdotes</h1>
-      
-        <div>
-          <Link style={padding} to="/">
-            anecdotes
-          </Link>
-          <Link style={padding} to="/create">
-            create new
-          </Link>
-          <Link style={padding} to="/about">
-            about
-          </Link>
-        </div>
-        <Notification message={notification} />
-        <Switch>
-          <Route path="/anecdotes/:id">
-            <Anecdote anecdote={anecdote}/>
-          </Route>
-          <Route path="/create">
-            <CreateNew addNew={addNew} />
-          </Route>
-          <Route path="/about">
-            <About />
-          </Route>
-          <Route path="/">
-            <AnecdoteList anecdotes={anecdotes} />
-          </Route>
-        </Switch>
-      
+
+      <div>
+        <Link style={padding} to="/">
+          anecdotes
+        </Link>
+        <Link style={padding} to="/create">
+          create new
+        </Link>
+        <Link style={padding} to="/about">
+          about
+        </Link>
+      </div>
+      <Notification message={notification} />
+      <Switch>
+        <Route path="/anecdotes/:id">
+          <Anecdote anecdote={anecdote} />
+        </Route>
+        <Route path="/create">
+          <CreateNew addNew={addNew} />
+        </Route>
+        <Route path="/about">
+          <About />
+        </Route>
+        <Route path="/">
+          <AnecdoteList anecdotes={anecdotes} />
+        </Route>
+      </Switch>
+
       <Footer />
     </div>
   );
